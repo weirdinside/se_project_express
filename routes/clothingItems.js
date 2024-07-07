@@ -8,9 +8,7 @@ const {
 
 router.post("/", createItem);
 router.delete("/:itemId", deleteItem);
-router.get("/", ()=>{
-  console.log('wegotit')
-});
+router.get("/", getItems);
 router.put("/:itemId", updateItems);
 
 module.exports = router;

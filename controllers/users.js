@@ -13,7 +13,6 @@ const getUsers = (req, res) => {
 
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
-  console.log(name, avatar);
 
   User.create({ name, avatar })
     .then((user) => {
