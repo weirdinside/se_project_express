@@ -2,17 +2,20 @@ const Item = require("../models/clothingItem");
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  console.log({ name, weather, imageUrl });
-
   Item.create({
     name,
     weather,
     imageUrl,
-  }).then((item) => {
-    res.send({ data: item }).catch((err) => {
-      res.status(500).send({ message: "error from createItem", err });
+  })
+    .then((item) => {
+      res.send({ data: item });
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
     });
-  });
 };
 
 const getItems = (req, res) => {
@@ -34,7 +37,13 @@ const updateItems = (req, res) => {
       res.send({ data: item });
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error in updating item", err });
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -43,10 +52,54 @@ const deleteItem = (req, res) => {
   Item.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => {
-      res.send({ message: `${item} has been deleted` });
+      res.status(200).send({ message: `${item} has been deleted` });
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error in deleting item", err });
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
+    });
+};
+
+const likeItem = (req, res) => {
+  Item.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail()
+    .then((item) => res.send({ data: item }))
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
+    });
+};
+
+const dislikeItem = (req, res) => {
+  Item.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail()
+    .then((item) => res.send({ data: item }))
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -55,4 +108,6 @@ module.exports = {
   getItems,
   updateItems,
   deleteItem,
+  likeItem,
+  dislikeItem,
 };

@@ -5,10 +5,7 @@ const getUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => {
-      console.error(err);
-      return res.status(500).send({ message: err.message });
-    });
+    .catch((err) => res.status(500).send({ message: err.message }));
 };
 
 const createUser = (req, res) => {
@@ -19,7 +16,6 @@ const createUser = (req, res) => {
       res.status(201).send(user);
     })
     .catch((err) => {
-      console.log(err);
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err.message });
       }
@@ -35,7 +31,6 @@ const getUserById = (req, res) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      console.log(err);
       if (err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
