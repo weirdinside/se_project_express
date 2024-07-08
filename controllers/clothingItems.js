@@ -7,12 +7,12 @@ const createItem = (req, res) => {
     name,
     weather,
     imageUrl,
+    owner: req.user._id,
   })
-    .then((item) => {
-      res.send({ data: item });
-    })
+    .then((item) => res.send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError") {
+        console.log(err);
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
@@ -23,12 +23,10 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   Item.find({})
-    .then((items) => {
-      res.send(items);
-    })
-    .catch((err) => {
-      res.status(DEFAULT).send({ message: "Error in getting items", err });
-    });
+    .then((items) => res.send(items))
+    .catch((err) =>
+      res.status(DEFAULT).send({ message: "Error in getting items", err })
+    );
 };
 
 const deleteItem = (req, res) => {
@@ -43,7 +41,9 @@ const deleteItem = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: "Requested file not found" });
+        return res
+          .status(NOT_FOUND)
+          .send({ message: "Requested file not found" });
       }
       return res
         .status(DEFAULT)
