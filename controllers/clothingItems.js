@@ -24,8 +24,8 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   Item.find({})
     .then((items) => res.send(items))
-    .catch((err) =>
-      res.status(DEFAULT).send({ message: "Error in getting items", err })
+    .catch(() =>
+      res.status(DEFAULT).send({ message: "Error in getting items" })
     );
 };
 

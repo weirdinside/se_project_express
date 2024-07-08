@@ -6,10 +6,10 @@ const getUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => {
+    .catch(() => {
       res
         .status(DEFAULT)
-        .send({ message: "An error has occurred on the server.", err });
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -42,7 +42,9 @@ const getUserById = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: "Requested file not found" });
+        return res
+          .status(NOT_FOUND)
+          .send({ message: "Requested file not found" });
       }
       //  else if (err.name === "CastError") {
       //   return res.status(NOT_FOUND).send({ message: err.message });
