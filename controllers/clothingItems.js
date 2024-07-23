@@ -1,5 +1,11 @@
 const Item = require("../models/clothingItem");
-const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("../utils/errors");
+const {
+  FORBIDDEN,
+  UNAUTHORIZED,
+  BAD_REQUEST,
+  NOT_FOUND,
+  DEFAULT,
+} = require("../utils/errors");
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -34,6 +40,11 @@ const deleteItem = (req, res) => {
   Item.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => {
+      if (String(item.owner) !== req.user._id) {
+        return res
+          .status(FORBIDDEN)
+          .send({ message: "You cannot delete an item you did not add" });
+      }
       res.status(200).send({ message: `${item._id} has been deleted` });
     })
     .catch((err) => {
