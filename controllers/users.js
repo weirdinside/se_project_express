@@ -48,28 +48,32 @@ const updateUser = (req, res) => {
     runValidators: true,
   })
     .then((user) => {
-      console.log(user.name)
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "Invalid user" });
       }
-      
-      console.log("profile has been updated with the following", user)
+
+      console.log(`your new username is: ${user.name} `);
+      console.log("profile has been updated with the following", user);
 
       return res.status(200).send({
         data: { user },
       });
     })
-    .catch(() => res
+    .catch(() =>
+      res
         .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." }));
+        .send({ message: "An error has occurred on the server." })
+    );
 };
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res
+    .catch(() =>
+      res
         .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." }));
+        .send({ message: "An error has occurred on the server." })
+    );
 };
 
 const createUser = (req, res) => {
@@ -99,7 +103,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      return res.status(DEFAULT).sent({message: "An error occurred"})
+      return res.status(DEFAULT).sent({ message: "An error occurred" });
     });
 };
 
