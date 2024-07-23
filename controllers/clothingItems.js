@@ -18,7 +18,6 @@ const createItem = (req, res) => {
     .then((item) => res.send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        console.log(err);
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
@@ -71,7 +70,6 @@ const likeItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
-      console.log(err);
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
@@ -95,7 +93,6 @@ const dislikeItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
-      console.log(err);
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }

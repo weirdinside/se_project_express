@@ -3,8 +3,10 @@ const NOT_FOUND = 404;
 const DEFAULT = 500;
 const UNAUTHORIZED = 401;
 const FORBIDDEN = 403;
+const CONFLICT = 409;
 
 module.exports = {
+  CONFLICT,
   FORBIDDEN,
   UNAUTHORIZED,
   BAD_REQUEST,

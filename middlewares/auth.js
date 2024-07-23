@@ -1,23 +1,27 @@
-
-const { UNAUTHORIZED, BAD_REQUEST, NOT_FOUND, DEFAULT } = require ('../utils/errors')
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
+const { UNAUTHORIZED } = require("../utils/errors");
 
 module.exports = (req, res, next) => {
-    const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith('Bearer ')){
-        return res.status(UNAUTHORIZED).send({message: "Unauthorized"});
-    }
+  const auth = req.headers.authorization;
 
-    const token = authorization.replace("Bearer ", "");
-    let payload;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return res
+      .status(UNAUTHORIZED)
+      .send({ message: "Authorization error" });
+  }
 
-    try {
-        payload = jwt.verify(token, 'super-strong-secret');
-      } catch (err) {
-        return res.status(UNAUTHORIZED).send({message: "Unauthorized"})
-      }
-      req.user = payload;
-      
-      return next();
-}
+  const token = auth.replace("Bearer ", "");
+  let payload;
+
+  try {
+    payload = jwt.verify(token, JWT_SECRET);
+  } catch (err) {
+    return res
+      .status(UNAUTHORIZED)
+      .send({ message: "Authorization error" });
+  }
+  req.user = payload;
+
+  return next();
+};
