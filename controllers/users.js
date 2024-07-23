@@ -1,13 +1,12 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const {
   BAD_REQUEST,
   NOT_FOUND,
   DEFAULT,
-  UNAUTHORIZED,
   CONFLICT,
 } = require("../utils/errors");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
 const { JWT_SECRET } = require("../utils/config");
 
 const getCurrentUser = (req, res) => [
@@ -37,9 +36,7 @@ const login = (req, res) => {
       });
       res.send({ token });
     })
-    .catch(() => {
-      return res.status(BAD_REQUEST).send({ message: "Not Authorized" });
-    });
+    .catch(() => res.status(BAD_REQUEST).send({ message: "Not Authorized" }));
 };
 
 const updateUser = (req, res) => {
@@ -51,30 +48,28 @@ const updateUser = (req, res) => {
     runValidators: true,
   })
     .then((user) => {
+      console.log(user.name)
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "Invalid user" });
       }
-      return res.send({
-        data: { user, message: "Info updated" },
+      
+      console.log("profile has been updated with the following", user)
+
+      return res.status(200).send({
+        data: { user },
       });
     })
-    .catch((e) => {
-      return res
+    .catch(() => res
         .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
-    });
+        .send({ message: "An error has occurred on the server." }));
 };
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => {
-      return res.send(users);
-    })
-    .catch(() => {
-      return res
+    .then((users) => res.send(users))
+    .catch(() => res
         .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
-    });
+        .send({ message: "An error has occurred on the server." }));
 };
 
 const createUser = (req, res) => {
@@ -104,6 +99,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
+      return res.status(DEFAULT).sent({message: "An error occurred"})
     });
 };
 

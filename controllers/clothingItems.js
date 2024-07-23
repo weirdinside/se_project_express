@@ -1,7 +1,6 @@
 const Item = require("../models/clothingItem");
 const {
   FORBIDDEN,
-  UNAUTHORIZED,
   BAD_REQUEST,
   NOT_FOUND,
   DEFAULT,
@@ -44,7 +43,7 @@ const deleteItem = (req, res) => {
           .status(FORBIDDEN)
           .send({ message: "You cannot delete an item you did not add" });
       }
-      res.status(200).send({ message: `${item._id} has been deleted` });
+      return res.status(200).send({ message: `${item._id} has been deleted` });
     })
     .catch((err) => {
       if (err.name === "CastError") {
