@@ -52,12 +52,7 @@ const updateUser = (req, res) => {
         return res.status(NOT_FOUND).send({ message: "Invalid user" });
       }
 
-      console.log(`your new username is: ${user.name} `);
-      console.log("profile has been updated with the following", user);
-
-      return res.status(200).send({
-        data: { user },
-      });
+      return res.status(200).send({user});
     })
     .catch(() =>
       res
