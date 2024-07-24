@@ -35,7 +35,7 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  Item.findByIdAndDelete(itemId)
+  Item.findById(itemId)
     .orFail()
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
@@ -43,7 +43,7 @@ const deleteItem = (req, res) => {
           .status(FORBIDDEN)
           .send({ message: "You cannot delete an item you did not add" });
       }
-      return res.status(200).send({ message: `${item._id} has been deleted` });
+      return item.deleteOne().then(()=> {res.status(200).send({ message: `${item._id} has been deleted` })})
     })
     .catch((err) => {
       if (err.name === "CastError") {

@@ -28,6 +28,11 @@ const getCurrentUser = (req, res) => [
 
 const login = (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Email and password are both required" });
+  }
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -36,7 +41,12 @@ const login = (req, res) => {
       });
       res.send({ token });
     })
-    .catch(() => res.status(BAD_REQUEST).send({ message: "Not Authorized" }));
+    .catch((err) => {
+      if (err.message === "Incorrect email or password") {
+        return res.status(BAD_REQUEST).send({ message: "Not Authorized" });
+      }
+      return res.status(DEFAULT).send({ message: "An error has occurred" });
+    });
 };
 
 const updateUser = (req, res) => {
@@ -52,23 +62,16 @@ const updateUser = (req, res) => {
         return res.status(NOT_FOUND).send({ message: "Invalid user" });
       }
 
-      return res.status(200).send({user});
+      return res.status(200).send({ user });
     })
-    .catch(() =>
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(BAD_REQUEST).send({ message: "Validation error" });
+      }
       res
         .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." })
-    );
-};
-
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch(() =>
-      res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." })
-    );
+        .send({ message: "An error has occurred on the server." });
+    });
 };
 
 const createUser = (req, res) => {
@@ -106,6 +109,5 @@ module.exports = {
   updateUser,
   getCurrentUser,
   login,
-  getUsers,
   createUser,
 };
