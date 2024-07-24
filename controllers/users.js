@@ -6,6 +6,7 @@ const {
   NOT_FOUND,
   DEFAULT,
   CONFLICT,
+  UNAUTHORIZED,
 } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
@@ -43,7 +44,7 @@ const login = (req, res) => {
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
-        return res.status(BAD_REQUEST).send({ message: "Not Authorized" });
+        return res.status(UNAUTHORIZED).send({ message: "Not Authorized" });
       }
       return res.status(DEFAULT).send({ message: "An error has occurred" });
     });
@@ -66,9 +67,9 @@ const updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: "Validation error" });
+        return res.status(BAD_REQUEST).send({ message: "Validation error" });
       }
-      res
+      return res
         .status(DEFAULT)
         .send({ message: "An error has occurred on the server." });
     });
