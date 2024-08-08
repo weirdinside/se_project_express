@@ -93,12 +93,14 @@ const createUser = (req, res) => {
         .hash(password, 10)
         .then((hash) => User.create({ name, avatar, email, password: hash }))
         .then((user) => {
+          console.log(user)
           res.send({
             data: { name: user.name, avatar: user.avatar, email: user.email },
           });
         });
     })
     .catch((err) => {
+      console.log(err)
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }

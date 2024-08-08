@@ -43,7 +43,9 @@ const deleteItem = (req, res) => {
           .status(FORBIDDEN)
           .send({ message: "You cannot delete an item you did not add" });
       }
-      return item.deleteOne().then(()=> {res.status(200).send({ message: `${item._id} has been deleted` })})
+      return item.deleteOne().then(() => {
+        res.status(200).send({ message: `${item._id} has been deleted` });
+      });
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -67,7 +69,9 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      return res.status(200).send({ data: item });
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
